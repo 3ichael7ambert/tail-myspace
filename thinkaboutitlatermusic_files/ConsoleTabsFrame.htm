@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+
+
+
+<!-- Splash -->
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+<script type="text/javascript">
+	//<![CDATA[
+var MySpace = {};
+var MySpaceRes = {};
+MySpaceRes.Common = {"Yes":"Yes","No":"No","Ok":"Ok","Attention":"Attention"};
+MySpaceRes.Header = {"Cancel":"Cancel / Cancelación","Continue":"Continue / Continuar"};
+MySpace.ClientContext = {"UserId":320162828,"DisplayFriendId":0,"IsLoggedIn":true,"FunctionalContext":"Splash","UserType":1};
+
+	MySpace.StaticContentBase='http://x.myspacecdn.com';
+	
+MySpace.ClientMaintenanceConfigs = {"asyncphotobrowsecaching":0,"msplinksconvertall":0,"photocommentsajax":0,"inf_ind_newvideocomment":0,"musicjv_amazoninplace":0,"enablevideocategorydropdown":0,"applications_userapppreferences":0,"inf_ind_unreadim":0,"webimtestclient":0,"applications_showafterloaduhp":0,"applications_showafterloadprofiles":0,"applications_enablev2settingspopup":0,"musicjv_allmyplaylists":0,"inf_ind_newclassified":0,"webimcoldfusion":0,"webimclientrichtexteditor":0,"mdpcontaineruseopencanvas":0,"inf_ind_newautotag":0,"applications_enableopenidpopuphandling":0,"applications_removeonappprofile":0,"friendselectorinstatusmooddialog":0,"musicjv_debug":0,"photoquickpostmessaging":0,"mdp_enable_homeappnavdragdrop":0,"musicjv_stoprefresh_medrec":0,"mystuffautos":0,"mystuffreportabusepost":0,"dwbeaconmusicsearch":0,"mystuffuploadphotos":0,"dwbeaconclientv2":0,"mdpactivitiesautopublish":0,"dwbeaconpymk":0,"dwbeaconmailv2":0,"mdp_rpcsetauthtoken":0,"mmt_usebigpipeuniveralid":0,"mystuff_userestfulurls":0,"eventrouterrelayclient":0,"dwbeaconmusicbuybutton":0,"applications_optimizeinstallcallback":0,"eventrouterdatarelayclient":0,"signup_addrecommendationv2_deafultselectall":0,"appnotification_useosmltemplatename":0};
+MySpace.ClientIntMaintenanceConfigs = {};
+//]]>
+</script><title>
+	MySpace
+</title><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+
+<script type="text/javascript" language="javascript">
+      //suppress js errors.
+    //try {
+    //	window.onerror = function( e ) {
+    //		debugger;
+    //		if( WebIM ) {
+    //			//WebIM.Util.error( e )
+    //		}
+    //		return true;
+    //	}
+    //} catch( e ) { }
+    var pageLoaded = false;    
+    var parentGeneralizeSupressed = true;
+    var domainGeneralized = false;
+    function generalizeDomain() {
+	      domainGeneralized = true;
+	     //sets domain to top level domain.
+	        var domain = document.domain;
+	        if(domain[domain.length-1]!==".") {
+		        var domains = domain.split(".");
+		        if (domains.length >= 2) {
+			        document.domain = domains[domains.length - 2] + "." + domains[domains.length - 1];
+		        }
+	        }
+    }
+
+    function accessParentFrame()
+    {
+	    try {
+		    //webkit does not throw an exception when accessing window.parent.location.href but ff and ie do.
+		    if( !top.location.href ) {
+			    generalizeDomain( );
+		    }		    
+			var supressFuseactions = {"blog.create":0,"blog.edit":1,"blog.commentreply":2,"blog.comment":3,"forums.post":4,"mail.compose":5,"mail.message":6, "mail.reply":7, "mail.forward":8};
+			if(typeof top.supressGeneralizeDomain==="undefined" && typeof top.supressFuseactions[top.fuseaction]==="undefined") parentGeneralizeSupressed = false;
+			parentGeneralizeSupressed = true;
+	    } catch( e ) {
+			parentGeneralizeSupressed = true;			
+		    generalizeDomain( );
+		    
+	    }
+    }
+
+    //call it when page loads
+    accessParentFrame();
+
+    //TODO:  Add addHandlers function.
+    function addHandler(elementID, eventType, listener) {
+	    var element = document.getElementById( elementID );
+	    addHandlerFor(element, eventType, listener)
+    }
+
+    //Key for each is the element guid.
+    var globalHandlers = {};
+    var elements;
+    var guid = 1;
+
+    function addHandlerFor(element, eventType, handler) {
+        if( !handler.guid ) handler.guid = ++guid;
+        if( !element.guid ) element.guid = ++guid;
+        if( !element.events ) element.events = {};
+        //check for a global entry for this element.
+        if( !globalHandlers[element.guid] ) globalHandlers[element.guid] = {};
+        var handlers = globalHandlers[element.guid][eventType];
+        if( !handlers ) {
+            handlers = globalHandlers[element.guid][eventType] = {};
+            //store existing event handler
+            if( element['on' + eventType] )
+                handlers[0] = element['on' + eventType];
+        }
+        handlers[handler.guid] = handler;
+	    /*
+	    if(element) {
+		    var _listener = function ( e ) {
+		        alert(e.type);
+			    listener.call( element , e );
+		    }		
+		    element.attachEvent ? element.attachEvent('on' + eventType, _listener) : element.addEventListener(eventType, _listener, false);
+	    }
+	    */
+	    //removes closures by assigning to global handler.
+	    element['on' + eventType] = handleEvent;
+    }
+
+    function normalizeEvent( event ) {
+        event.preventDefault = normalizeEvent.preventDefault;
+        event.stopPropagation = normalizeEvent.stopPropagation;
+        return event;
+    }
+
+    normalizeEvent.preventDefault = function( ) {
+        this.returnValue = false;
+    }
+    normalizeEvent.stopPropagation = function( ) {
+        this.cancelBubble = true;
+    }
+
+    function handleEvent( event ) {
+        event = event || normalizeEvent( window.event );
+        var handlers = globalHandlers[this.guid][event.type];
+        for( var i in handlers ) {
+            var f = handlers[i];
+            if( typeof f == 'function' ) {
+                f.call( this, event );
+            }
+        } 
+    }
+
+    function onPageLoaded( ) {
+	    pageLoaded = true;
+	    addHandlerFor( document.body, 'keydown', activityUpdate );
+	    addHandlerFor( document.body, 'mousedown', activityUpdate );	
+    }
+
+    function activityUpdate( ) {
+        if(window.WebIM)
+            WebIM.API.activity = true;
+    }
+	
+    function startLookingForDomainChange () {			
+	    if( !domainGeneralized ) {		
+			if(!parentGeneralizeSupressed)
+			{
+				 generalizeDomain();
+			}
+//		    if( location.href.search( 'settotopdomain') > 0 ) {			
+//			    generalizeDomain();
+//		    }
+//		    else if (!accessParentPage || ! isParentGeneralizeSupressed()) {			
+//			    window.setTimeout(function() {startLookingForDomainChange()}, 100);
+//		    }
+	    }
+    }
+</script>
+
+<script language="javascript" type="text/javascript">
+	startLookingForDomainChange();	
+</script>
+
+<link rel="stylesheet" type="text/css" href="thinkaboutitlatermusic_files/global_xqhglojc.css">
+</head><body class="webimIframe" onload="javascript:onPageLoaded();">
+	    <span style="display: inline;" id="consoleSponsor"></span>
+	    <!--
+	    <a id="newMessageIndicator" class="webimIndicator" target="_blank" href="http://home.myspace.com/">New Messages!</a>
+	    <a id="newFriendRequestsIndicator" class="webimIndicator" target="_blank" href="http://home.myspace.com/">New Friend Requests!</a>
+	    -->	        
+		<div id="imConsole" class="imConsoleDefault">
+		<div id="imConsoleContent" class="right">		
+		<div style="display: none;" id="offlineMessage" class="displayNone">
+			<span>You are currently offline for IM </span><a id="goOnlineButton1" onclick="WebIM.Console.ConsoleUI.goOnline( )">Go Online</a>
+		</div>
+		<div style="display: none;" id="loggedInOtherLocationMessage" class="displayNone">
+			<span>You logged in to IM at another location</span><a id="goOnlineButton2" onclick="WebIM.Console.ConsoleUI.goOnline( true )">Go Online for IM </a>
+		</div>
+		<div style="display: none;" id="unavailableMessage" class="displayNone">
+			<span>Sorry, MySpaceIM is unavailable right now.  Please try again later.</span>
+		</div>
+		<div style="display: inline;" id="helpMessage" class="displayNone">
+			<span>Select an Online Friend to start chatting.</span>
+		</div>
+		<div id="collapsable" style="right: 73px;">
+			<div id="shiftLeftButton" class="shiftButtonTab consoleTab left displayNone" style="">
+				<span class="shiftLeftIcon" id=""><img src="ConsoleTabsFrame_data/spacer.gif"></span>
+				<span id="leftTabCount">(0)</span>
+				<span class="displayNone" id="newMessageAlertLeft">new</span>
+			</div>
+			<div class="left" id="tabs">
+			    
+			</div>
+			<div id="shiftRightButton" class="shiftButtonTab consoleTab left displayNone" style="">
+				<div class="tabBorderOverlay"></div>
+				<span class="shiftRightIcon" id=""><img src="ConsoleTabsFrame_data/spacer.gif"></span>
+				<span id="rightTabCount">(0)</span>
+				<span class="displayNone" id="newMessageAlertRight">new</span>
+			</div>
+			<div id="friendsListTab" class="consoleTab left setRightMargin" style="display: block;">
+					<div class="tabBorderOverlay"></div>
+					<img id="friendsListLoadingIcon" src="ConsoleTabsFrame_data/spacer.gif">
+					<span>Online Friends (<span id="buddyListBuddyCount">8</span>) </span>
+			</div>
+		</div>
+	</div>
+</div>
+	
+</body></html>
